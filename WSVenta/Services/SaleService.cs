@@ -9,7 +9,7 @@ namespace WSVenta.Services
 {
     public class SaleService : ISaleService
     {
-        public void Add(SaleRequest model)
+        public void Add(SaleEmailRequest model)
         {
             {
                 using (PuntoVentaContext db = new PuntoVentaContext())
@@ -28,7 +28,7 @@ namespace WSVenta.Services
                             db.SaveChanges();
                             decimal isubtotal = 0;
 
-                            foreach (var modelItemSale in model.ItemSales)
+                            foreach (var modelItemSale in model.oItemSales)
                             {
                                 
                                 var iItemSale = new Models.ItemSale();

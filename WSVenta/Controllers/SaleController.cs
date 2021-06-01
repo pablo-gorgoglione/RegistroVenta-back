@@ -42,9 +42,17 @@ namespace WSVenta.Controllers
                                 select userq.Id;
                     var id = query.First();
                     modeladd.IdUser = id;
+
+                    foreach (var item in model.oItemSales)
+                    {
+                        var query2 = from v in db.Items
+                                     where v.Name == item.nameItem
+                                     select v.Id;
+                        item.IdItem = (Int32)query2.First();
+                    }
                 }
                 modeladd.Date = model.Date;
-                modeladd.ItemSales = model.ItemSales;
+                modeladd.oItemSales = model.oItemSales;
                 modeladd.Total = model.Total;
                 _sale.Add(modeladd);
                 response.Success = 1;

@@ -16,7 +16,7 @@ namespace WSVenta.Models.Request
 
         [Required]
         [MinLength(1, ErrorMessage = "Deben aia existir ItemVentas")]
-        public List<oItemSale> ItemSales { get; set; }
+        public List<oItemSale> oItemSales { get; set; }
 
         public DateTime Date { get; set; }
 
@@ -24,7 +24,7 @@ namespace WSVenta.Models.Request
 
         public SaleEmailRequest()
         {
-            this.ItemSales = new List<oItemSale>();
+            this.oItemSales = new List<oItemSale>();
         }
     }
 
@@ -38,7 +38,7 @@ namespace WSVenta.Models.Request
 
         public int IdItem { get; set; }
 
-        public string name { get; set; }
+        public string nameItem { get; set; }
 
     }
 
