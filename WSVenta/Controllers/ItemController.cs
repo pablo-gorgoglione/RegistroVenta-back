@@ -75,7 +75,8 @@ namespace WSVenta.Controllers
                     iItem.Name = oRequest.Name;
                     iItem.UnitPrice = oRequest.UnitPrice;
                     iItem.Cost = oRequest.Cost;
-                    db.Entry(iItem).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    //db.Entry(iItem).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    db.Update(iItem);
                     db.SaveChanges();
                     oResponse.Success = 1;
                 }
@@ -89,9 +90,7 @@ namespace WSVenta.Controllers
         }
 
         [HttpDelete("{Id}")]
-        public IActionResult Delete(long
-
-            Id)
+        public IActionResult Delete(long Id)
         {
             Response oResponse = new Response();
             try
@@ -111,5 +110,5 @@ namespace WSVenta.Controllers
             }
             return Ok(oResponse);
         }
-}
+    }
 }

@@ -14,8 +14,12 @@ namespace WSVenta.Models.Request
         public int IdUser { get; set; }
 
         [Required]
-        [MinLength(1, ErrorMessage = "Deben existir ItemVentas")]
+        [MinLength(1, ErrorMessage = "Deben aia existir ItemVentas")]
         public List<ItemSale> ItemSales { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public decimal? Total { get; set; }
 
         public SaleRequest()
         {
@@ -23,7 +27,7 @@ namespace WSVenta.Models.Request
         }
     }
 
-    public class ItemSale
+    public class ItemSale 
     {
         public int Quantity { get; set; }
 
@@ -32,21 +36,24 @@ namespace WSVenta.Models.Request
         public decimal Subtotal { get; set; }
 
         public int IdItem { get; set; }
+
+        public string name { get; set; }
+
     }
 
-    #region Validations
-    public class UserExits : ValidationAttribute
-    {
-        public override bool IsValid(object value)
-        {
-            int idUser = (int)value;
-            using (var db = new Models.PuntoVentaContext())
-            {
-                if (db.Users.Find(idUser) == null) return false;
-            }
-            return true;
-        }
-    }
-
-    #endregion
+    //#region Validations
+    //public class UserExits : ValidationAttribute
+    //{
+    //    public override bool IsValid(object value)
+    //    {
+    //        int idUser = (int)value;
+    //        using (var db = new Models.PuntoVentaContext())
+    //        {
+    //            if (db.Users.Find(idUser) == null) return false;
+    //        }
+    //        return true;
+    //    }
+    //}
+    //
+    //#endregion
 }

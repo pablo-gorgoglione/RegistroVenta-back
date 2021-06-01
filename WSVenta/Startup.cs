@@ -37,6 +37,7 @@ namespace WSVenta
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WSVenta", Version = "v1" });
+                c.CustomSchemaIds(type => type.ToString()); // esto lo meti yo hehe
             });
 
             services.AddCors(options =>
@@ -47,8 +48,13 @@ namespace WSVenta
                         builder.WithHeaders("*");
                         builder.WithOrigins("*");
                         builder.WithMethods("*");
+                    
                     });
             });
+
+            services.AddControllers().AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
 
             services.AddControllers()
                 .AddJsonOptions(options=>
@@ -97,7 +103,7 @@ namespace WSVenta
             }
 
             app.UseHttpsRedirection();
-
+            //app.UseDeveloperExceptionPage();
             app.UseRouting();
             app.UseCors(MiCors);
             app.UseAuthentication();

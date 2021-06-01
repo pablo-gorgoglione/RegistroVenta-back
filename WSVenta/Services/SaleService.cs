@@ -21,29 +21,45 @@ namespace WSVenta.Services
                         try
                         {
                             var sale = new Sale();
-                            sale.Total = model.ItemSales.Sum(d => d.Quantity * d.UnitPrice);
+                            //sale.Total = model.ItemSales.Sum(d => d.Quantity * d.UnitPrice);
                             sale.Date = DateTime.Now;
                             sale.IdUser = model.IdUser;
                             db.Sales.Add(sale);
                             db.SaveChanges();
+                            decimal isubtotal = 0;
 
                             foreach (var modelItemSale in model.ItemSales)
                             {
+                                
                                 var iItemSale = new Models.ItemSale();
+                                var iItem = new Models.Item();
+                                long id;
+
                                 iItemSale.Quantity = modelItemSale.Quantity;
                                 iItemSale.IdItem = modelItemSale.IdItem;
-                                iItemSale.UnitPrice = modelItemSale.UnitPrice;
-                                iItemSale.Subtotal = (modelItemSale.Quantity * modelItemSale.UnitPrice);
+
+                                id = (long)modelItemSale.IdItem;
+                                iItem = db.Items.Find(id);
+
+                                iItemSale.UnitPrice = iItem.UnitPrice;
+                                iItemSale.Subtotal = (modelItemSale.Quantity * iItemSale.UnitPrice);
+                                isubtotal = isubtotal + iItemSale.Subtotal;
+
                                 iItemSale.IdSale = sale.Id;
                                 db.ItemSales.Add(iItemSale);
                                 db.SaveChanges();
+
                             }
                             transaction.Commit();
+
+                            sale.Total = isubtotal;
+                            db.Sales.Update(sale).State = Microsoft.EntityFrameworkCore.EntityState.Modified; ;
+                            db.SaveChanges();
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
                             transaction.Rollback();
-                            throw new Exception("Ocurrio un error en la insercion");
+                            throw new Exception(ex.Message);
                         }
                     }
                 }

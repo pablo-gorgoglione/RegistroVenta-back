@@ -27,7 +27,7 @@ namespace WSVenta.Tools
                 }
             }
 
-            return reader.GetDecimal(); // Aca cambie el GetDecimal, habia un GetInt32
+            return reader.GetInt32(); // Aca cambie el GetDecimal, habia un GetInt32
         }
 
         public override void Write(Utf8JsonWriter writer, decimal value, JsonSerializerOptions options)

@@ -25,13 +25,28 @@ namespace WSVenta.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(SaleRequest model)
+        public IActionResult Add(SaleEmailRequest model)
         {
             Response response = new Response();
+            SaleEmailRequest modeladd = new SaleEmailRequest(); //cambie aca el saleemailquest, estaba SaleRequest
 
             try
             {
-                _sale.Add(model);
+
+
+                //Recibo el email en model y lo uso para buscar el id del user logeado y no tener que escribirlo en la view
+                using (PuntoVentaContext db = new PuntoVentaContext())
+                {
+                    var query = from userq in db.Users
+                                where userq.Email == model.email
+                                select userq.Id;
+                    var id = query.First();
+                    modeladd.IdUser = id;
+                }
+                modeladd.Date = model.Date;
+                modeladd.ItemSales = model.ItemSales;
+                modeladd.Total = model.Total;
+                _sale.Add(modeladd);
                 response.Success = 1;
             }
             catch (Exception ex)
@@ -62,6 +77,59 @@ namespace WSVenta.Controllers
 
             return Ok(oResponse);
 
+        }
+       // [HttpGet("{email}")] // fucking shit
+        //public IActionResult Getid(string email)
+        //{
+        //    Response res = new Response();
+        //    try
+        //    {
+        //        using(PuntoVentaContext db = new PuntoVentaContext())
+        //        {
+        //            var query = from userq in db.Users
+        //                        where userq.Email == email
+        //                        select userq.Id;
+        //            var id = query;
+        //            res.Data = id;
+        //        }
+        //        res.Success = 1;
+                
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        res.Message = ex.Message;
+        //    }
+
+        //    return Ok(res);
+
+        //}
+
+        [HttpDelete("{Id}")]
+        public IActionResult Delete(long Id)
+        {
+            Response oResponse = new Response();
+            try
+            {
+                using (PuntoVentaContext db = new PuntoVentaContext())
+                {
+                    Sale iSale = db.Sales.Find(Id);
+
+                    foreach (var modelItemSale in iSale.ItemSales)
+                    {
+                        db.ItemSales.Remove(modelItemSale);
+                    }
+
+                    db.Sales.Remove(iSale);
+                    db.SaveChanges();
+                    oResponse.Success = 1;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                oResponse.Message = ex.Message;
+            }
+            return Ok(oResponse);
         }
 
     }
