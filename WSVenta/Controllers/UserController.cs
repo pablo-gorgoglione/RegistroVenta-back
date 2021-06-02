@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WSVenta.Models;
 using WSVenta.Models.Request;
 using WSVenta.Models.Response;
 using WSVenta.Services;
@@ -39,5 +40,32 @@ namespace WSVenta.Controllers
             response.Data = userreponse;
             return Ok(response);
         }
+
+        [HttpGet("{email}")]
+        public IActionResult Get(string email)
+        {
+            Response oResponse = new Response();
+            try
+            {
+                using (PuntoVentaContext db = new PuntoVentaContext())
+                {
+                    var query = from userq in db.Users
+                                where userq.Email == email
+                                select userq.Id;
+
+                    var lst = (int)query.First();
+                    oResponse.Success = 1;
+                    oResponse.Data = lst;
+                }
+            }
+            catch (Exception ex)
+            {
+                oResponse.Message = ex.Message;
+            }
+
+            return Ok(oResponse);
+
+        }
+
     }
 }

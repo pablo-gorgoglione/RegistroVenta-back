@@ -65,15 +65,45 @@ namespace WSVenta.Controllers
             return Ok(response);
         }
 
-        [HttpGet]
-        public IActionResult Get()
+
+
+        //[HttpGet] el viejo Get que traia todas las ventas nomas
+        //public IActionResult Get()
+        //{
+        //    Response oResponse = new Response();
+        //    try
+        //    {
+        //        using (PuntoVentaContext db = new PuntoVentaContext())
+        //        {
+        //            var lst = db.Sales.OrderByDescending(d => d.Id).ToList();
+        //            oResponse.Success = 1;
+        //            oResponse.Data = lst;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        oResponse.Message = ex.Message;
+        //    }
+
+        //    return Ok(oResponse);
+
+        //}
+
+
+        [HttpGet("{id}")]       //Este funciona
+        public IActionResult Get(long id)
         {
             Response oResponse = new Response();
             try
             {
                 using (PuntoVentaContext db = new PuntoVentaContext())
                 {
-                    var lst = db.Sales.OrderByDescending(d => d.Id).ToList();
+                    var query = from saleq in db.Sales
+                                where saleq.IdUser == id
+                                orderby saleq.Date
+                                select saleq;
+
+                    var lst = query.ToList();
                     oResponse.Success = 1;
                     oResponse.Data = lst;
                 }
@@ -86,31 +116,9 @@ namespace WSVenta.Controllers
             return Ok(oResponse);
 
         }
-       // [HttpGet("{email}")] // fucking shit
-        //public IActionResult Getid(string email)
-        //{
-        //    Response res = new Response();
-        //    try
-        //    {
-        //        using(PuntoVentaContext db = new PuntoVentaContext())
-        //        {
-        //            var query = from userq in db.Users
-        //                        where userq.Email == email
-        //                        select userq.Id;
-        //            var id = query;
-        //            res.Data = id;
-        //        }
-        //        res.Success = 1;
-                
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        res.Message = ex.Message;
-        //    }
 
-        //    return Ok(res);
 
-        //}
+
 
         [HttpDelete("{Id}")]
         public IActionResult Delete(long Id)
