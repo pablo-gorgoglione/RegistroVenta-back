@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace WSVenta.Controllers
     public class SaleController : ControllerBase
     {
         private ISaleService _sale;
+        private static long UserIdOn;
 
         public SaleController(ISaleService sale)
         {
@@ -32,8 +34,6 @@ namespace WSVenta.Controllers
 
             try
             {
-
-
                 //Recibo el email en model y lo uso para buscar el id del user logeado y no tener que escribirlo en la view
                 using (PuntoVentaContext db = new PuntoVentaContext())
                 {
@@ -65,8 +65,6 @@ namespace WSVenta.Controllers
             return Ok(response);
         }
 
-
-
         //[HttpGet] el viejo Get que traia todas las ventas nomas
         //public IActionResult Get()
         //{
@@ -93,6 +91,7 @@ namespace WSVenta.Controllers
         [HttpGet("{id}")]       //Este funciona
         public IActionResult Get(long id)
         {
+            UserIdOn = id;
             Response oResponse = new Response();
             try
             {
@@ -100,7 +99,7 @@ namespace WSVenta.Controllers
                 {
                     var query = from saleq in db.Sales
                                 where saleq.IdUser == id
-                                orderby saleq.Date
+                                orderby saleq.Date descending
                                 select saleq;
 
                     var lst = query.ToList();
@@ -117,7 +116,59 @@ namespace WSVenta.Controllers
 
         }
 
+        [HttpGet("Salelist/{opc}")]
+        public IActionResult GetSalesOrder(int opc)
+        {
+            //string connectionString = "server= localhost ; database= PuntoVenta ; integrated security= true";
+            // SqlConnection connection = new SqlConnection(connectionString);
+            Response oResponse = new Response();
+            try
+            {
+                using (PuntoVentaContext db = new PuntoVentaContext())
+                {
+                    DateTime lastweek = DateTime.Today;
+                    if (opc == 1)
+                    {
+                        lastweek = lastweek.AddDays(-7);
+                        var query = from saleq in db.Sales
+                                    where saleq.IdUser == UserIdOn && saleq.Date > lastweek
+                                    orderby saleq.Date descending
+                                    select saleq;
+                        var lst = query.ToList();
 
+                        //var query2 = from saleq2 in db.Sales
+                        //             where saleq2.Date > lastweek
+                        //             orderby saleq2.Date descending
+                        //             select saleq2;
+                        //var lst2 = query2.ToList();
+
+
+                        oResponse.Success = 1;
+
+                        oResponse.Data = lst;
+                    }
+                    if (opc == 2)
+                    {
+                        lastweek = lastweek.AddMonths(-1);
+                        var query = from saleq in db.Sales
+                                    where saleq.IdUser == UserIdOn && saleq.Date > lastweek
+                                    orderby saleq.Date descending
+                                    select saleq;
+
+                        var lst = query.ToList();
+                        oResponse.Success = 1;
+                        oResponse.Data = lst;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                oResponse.Message = ex.Message;
+            }
+
+            return Ok(oResponse);
+        }
 
 
         [HttpDelete("{Id}")]
@@ -145,6 +196,78 @@ namespace WSVenta.Controllers
             {
                 oResponse.Message = ex.Message;
             }
+            return Ok(oResponse);
+        }
+
+        [HttpPost("profits/{opc}")]
+        public IActionResult GetProfits(int opc)
+        {
+            Response oResponse = new Response();
+            try
+            {
+                using (PuntoVentaContext db = new PuntoVentaContext())
+                {
+                    DateTime lastweek = DateTime.Today;
+                    if (opc == 1)
+                    {
+                        lastweek = lastweek.AddDays(-7);
+                        var query = from saleq in db.Sales
+                                    where saleq.IdUser == UserIdOn && saleq.Date > lastweek
+                                    orderby saleq.Date descending
+                                    select (long)saleq.Id;
+
+                        var query2 = new ProfitsInfo [1];
+                        foreach (var saleid in query)
+                        {
+                                db.ItemSales
+                                .Where(x => x.IdSale == saleid)
+                                .Select(x => new ProfitsInfo
+                                {
+                                    pItemQuantity = x.Quantity,
+                                    pItemId = x.IdItem,
+                                }).ToList().Add(query2);
+                        }
+                        foreach (var itemsales in collection)
+                        {
+
+                        }
+                        
+
+
+
+                        var lst = query.ToList();
+
+                        //var query2 = from saleq2 in db.Sales
+                        //             where saleq2.Date > lastweek
+                        //             orderby saleq2.Date descending
+                        //             select saleq2;
+                        //var lst2 = query2.ToList();
+
+
+                        oResponse.Success = 1;
+
+                        oResponse.Data = lst;
+                    }
+                    if (opc == 2)
+                    {
+                        lastweek = lastweek.AddMonths(-1);
+                        var query = from saleq in db.Sales
+                                    where saleq.IdUser == UserIdOn && saleq.Date > lastweek
+                                    orderby saleq.Date descending
+                                    select saleq;
+
+                        var lst = query.ToList();
+                        oResponse.Success = 1;
+                        oResponse.Data = lst;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                oResponse.Message = ex.Message;
+            }
+
             return Ok(oResponse);
         }
 

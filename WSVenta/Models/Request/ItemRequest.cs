@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,5 +12,6 @@ namespace WSVenta.Models.Request
         public string Name { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal Cost { get; set; }
+        public int IdUser { get; set; }
     }
 }

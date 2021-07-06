@@ -108,7 +108,6 @@ namespace WSVenta
             app.UseCors(MiCors);
             app.UseAuthentication();
             app.UseAuthorization();
-
             
 
             app.UseEndpoints(endpoints =>

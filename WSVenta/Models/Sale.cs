@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace WSVenta.Models
 {
-    public partial class Sale
+    public partial class Sale   
     {
         public Sale()
         {
@@ -18,5 +18,6 @@ namespace WSVenta.Models
         public int IdUser { get; set; }
 
         public virtual ICollection<ItemSale> ItemSales { get; set; }
+
     }
 }

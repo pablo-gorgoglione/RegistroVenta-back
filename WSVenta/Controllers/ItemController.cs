@@ -16,17 +16,26 @@ namespace WSVenta.Controllers
     [Authorize]
     public class ItemController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult Get()
+        private static int UserIdOn;
+
+        [HttpGet("{Id}")]
+        public IActionResult Get(int Id)
         {
+            UserIdOn = Id;
             Response oResponse = new Response();
             try
             {
                 using (PuntoVentaContext db = new PuntoVentaContext())
                 {
-                    var lst = db.Items.OrderByDescending(d => d.Id).ToList();
+                    var lst = from itemsq in db.Items
+                              where itemsq.IdUser == Id
+                              select itemsq;
+                    oResponse.Data = lst.OrderBy(d => d.Name).ToList();
                     oResponse.Success = 1;
-                    oResponse.Data = lst;
+
+                    //var lst = db.Items.OrderByDescending(d => d.Id).ToList();
+                    //oResponse.Success = 1;
+                    //oResponse.Data = lst;
                 }
             }
             catch (Exception ex)
@@ -50,6 +59,7 @@ namespace WSVenta.Controllers
                     iItem.Name = oRequest.Name;
                     iItem.UnitPrice = oRequest.UnitPrice;
                     iItem.Cost = oRequest.Cost;
+                    iItem.IdUser = UserIdOn;
                     db.Items.Add(iItem);
                     db.SaveChanges();
                     oResponse.Success = 1;

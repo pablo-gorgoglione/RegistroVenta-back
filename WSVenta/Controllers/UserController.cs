@@ -41,7 +41,7 @@ namespace WSVenta.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{email}")]
+        [HttpGet("{email}")] //return id user
         public IActionResult Get(string email)
         {
             Response oResponse = new Response();
@@ -67,5 +67,27 @@ namespace WSVenta.Controllers
 
         }
 
+        [HttpGet("Name/{id}")] // return name of user
+        public IActionResult GetName(long id)
+        {
+            Response oResponse = new Response();
+            try
+            {
+                using (PuntoVentaContext db = new PuntoVentaContext())
+                {
+                    var query = from userq in db.Users
+                                where userq.Id == id
+                                select userq.Name;
+                    var lst = query.First().ToString();
+                    oResponse.Success = 1;
+                    oResponse.Data = lst;
+                }
+            }
+            catch (Exception ex)
+            {
+                oResponse.Message = ex.Message;
+            }
+            return Ok(oResponse);
+        }
     }
 }
