@@ -9,7 +9,7 @@ namespace WSVenta.Services
 {
     public class SaleService : ISaleService
     {
-        public void Add(SaleEmailRequest model)
+        public void Add(SaleRequest model)
         {
             {
                 using (PuntoVentaContext db = new PuntoVentaContext())
@@ -28,7 +28,7 @@ namespace WSVenta.Services
                             db.SaveChanges();
                             decimal isubtotal = 0;
 
-                            foreach (var modelItemSale in model.oItemSales)
+                            foreach (var modelItemSale in model.ItemSales)
                             {
                                 
                                 var iItemSale = new Models.ItemSale();
@@ -41,8 +41,8 @@ namespace WSVenta.Services
                                 id = (long)modelItemSale.IdItem;
                                 iItem = db.Items.Find(id);
 
-                                iItemSale.UnitPrice = iItem.UnitPrice;
-                                iItemSale.Subtotal = (modelItemSale.Quantity * iItemSale.UnitPrice);
+                                //iItemSale.UnitPrice = iItem.UnitPrice;
+                                iItemSale.Subtotal = modelItemSale.Subtotal;
                                 isubtotal = isubtotal + iItemSale.Subtotal;
 
                                 iItemSale.IdSale = sale.Id;
@@ -53,7 +53,7 @@ namespace WSVenta.Services
                             transaction.Commit();
 
                             sale.Total = isubtotal;
-                            db.Sales.Update(sale).State = Microsoft.EntityFrameworkCore.EntityState.Modified; ;
+                            db.Sales.Update(sale).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                             db.SaveChanges();
                         }
                         catch (Exception ex)

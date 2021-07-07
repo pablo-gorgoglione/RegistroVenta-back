@@ -8,6 +8,6 @@ namespace WSVenta.Services
 {
     public interface ISaleService 
     {
-        public void Add(SaleEmailRequest model);
+        public void Add(SaleRequest model);
     }
 }

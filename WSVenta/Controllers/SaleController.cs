@@ -30,7 +30,7 @@ namespace WSVenta.Controllers
         public IActionResult Add(SaleEmailRequest model)
         {
             Response response = new Response();
-            SaleEmailRequest modeladd = new SaleEmailRequest(); //cambie aca el saleemailquest, estaba SaleRequest
+            SaleRequest modeladd = new SaleRequest(); //cambie aca el saleemailquest, estaba SaleRequest
 
             try
             {
@@ -42,19 +42,11 @@ namespace WSVenta.Controllers
                                 select userq.Id;
                     var id = query.First();
                     modeladd.IdUser = id;
-
-                    foreach (var item in model.oItemSales)
-                    {
-                        var query2 = from v in db.Items
-                                     where v.Name == item.nameItem
-                                     select v.Id;
-                        item.IdItem = (Int32)query2.First();
-                    }
-                }
-                modeladd.Date = model.Date;
-                modeladd.oItemSales = model.oItemSales;
-                modeladd.Total = model.Total;
-                _sale.Add(modeladd);
+                    modeladd.Date = DateTime.Now;
+                    modeladd.ItemSales = model.ItemSales;
+                    _sale.Add(modeladd);
+                    db.SaveChanges();
+                }             
                 response.Success = 1;
             }
             catch (Exception ex)
@@ -199,77 +191,77 @@ namespace WSVenta.Controllers
             return Ok(oResponse);
         }
 
-        [HttpPost("profits/{opc}")]
-        public IActionResult GetProfits(int opc)
-        {
-            Response oResponse = new Response();
-            try
-            {
-                using (PuntoVentaContext db = new PuntoVentaContext())
-                {
-                    DateTime lastweek = DateTime.Today;
-                    if (opc == 1)
-                    {
-                        lastweek = lastweek.AddDays(-7);
-                        var query = from saleq in db.Sales
-                                    where saleq.IdUser == UserIdOn && saleq.Date > lastweek
-                                    orderby saleq.Date descending
-                                    select (long)saleq.Id;
+        //[HttpPost("profits/{opc}")]
+        //public IActionResult GetProfits(int opc)
+        //{
+        //    Response oResponse = new Response();
+        //    try
+        //    {
+        //        using (PuntoVentaContext db = new PuntoVentaContext())
+        //        {
+        //            DateTime lastweek = DateTime.Today;
+        //            if (opc == 1)
+        //            {
+        //                //lastweek = lastweek.AddDays(-7);
+        //                //var query = from saleq in db.Sales
+        //                //            where saleq.IdUser == UserIdOn && saleq.Date > lastweek
+        //                //            orderby saleq.Date descending
+        //                //            select (long)saleq.Id;
 
-                        var query2 = new ProfitsInfo [1];
-                        foreach (var saleid in query)
-                        {
-                                db.ItemSales
-                                .Where(x => x.IdSale == saleid)
-                                .Select(x => new ProfitsInfo
-                                {
-                                    pItemQuantity = x.Quantity,
-                                    pItemId = x.IdItem,
-                                }).ToList().Add(query2);
-                        }
-                        foreach (var itemsales in collection)
-                        {
+        //                //var query2 = new ProfitsInfo [1];
+        //                //foreach (var saleid in query)
+        //                //{
+        //                //        db.ItemSales
+        //                //        .Where(x => x.IdSale == saleid)
+        //                //        .Select(x => new ProfitsInfo
+        //                //        {
+        //                //            pItemQuantity = x.Quantity,
+        //                //            pItemId = x.IdItem,
+        //                //        }).ToList().Add(query2);
+        //                //}
+        //                //foreach (var itemsales in collection)
+        //                //{
 
-                        }
+        //                //}
                         
 
 
 
-                        var lst = query.ToList();
+        //               // var lst = query.ToList();
 
-                        //var query2 = from saleq2 in db.Sales
-                        //             where saleq2.Date > lastweek
-                        //             orderby saleq2.Date descending
-                        //             select saleq2;
-                        //var lst2 = query2.ToList();
+        //                //var query2 = from saleq2 in db.Sales
+        //                //             where saleq2.Date > lastweek
+        //                //             orderby saleq2.Date descending
+        //                //             select saleq2;
+        //                //var lst2 = query2.ToList();
 
 
-                        oResponse.Success = 1;
+        //                oResponse.Success = 1;
 
-                        oResponse.Data = lst;
-                    }
-                    if (opc == 2)
-                    {
-                        lastweek = lastweek.AddMonths(-1);
-                        var query = from saleq in db.Sales
-                                    where saleq.IdUser == UserIdOn && saleq.Date > lastweek
-                                    orderby saleq.Date descending
-                                    select saleq;
+        //                //oResponse.Data = lst;
+        //            }
+        //            if (opc == 2)
+        //            {
+        //                lastweek = lastweek.AddMonths(-1);
+        //                var query = from saleq in db.Sales
+        //                            where saleq.IdUser == UserIdOn && saleq.Date > lastweek
+        //                            orderby saleq.Date descending
+        //                            select saleq;
 
-                        var lst = query.ToList();
-                        oResponse.Success = 1;
-                        oResponse.Data = lst;
-                    }
+        //                var lst = query.ToList();
+        //                oResponse.Success = 1;
+        //                oResponse.Data = lst;
+        //            }
 
-                }
-            }
-            catch (Exception ex)
-            {
-                oResponse.Message = ex.Message;
-            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        oResponse.Message = ex.Message;
+        //    }
 
-            return Ok(oResponse);
-        }
+        //    return Ok(oResponse);
+        //}
 
     }
 }

@@ -27,19 +27,19 @@ namespace WSVenta.Models.Request
         }
     }
 
-    public class ItemSale 
-    {
-        public int Quantity { get; set; }
+    //public class ItemSale 
+    //{
+    //    public int Quantity { get; set; }
 
-        public decimal UnitPrice { get; set; }
+    //    public decimal UnitPrice { get; set; }
 
-        public decimal Subtotal { get; set; }
+    //    public decimal Subtotal { get; set; }
 
-        public int IdItem { get; set; }
+    //    public int IdItem { get; set; }
 
-        public string name { get; set; }
+    //    public string name { get; set; }
 
-    }
+    //}
 
     //#region Validations
     //public class UserExits : ValidationAttribute

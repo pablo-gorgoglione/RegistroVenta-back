@@ -14,10 +14,12 @@ namespace WSVenta.Models
 
         public long Id { get; set; }
         public string Name { get; set; }
-        public decimal UnitPrice { get; set; }
-        public decimal Cost { get; set; }
         public int IdUser { get; set; }
+        public long? IdPrice { get; set; }
+        public long? IdCost { get; set; }
 
+        public virtual Price Id1 { get; set; }
+        public virtual Cost IdNavigation { get; set; }
         public virtual ICollection<ItemSale> ItemSales { get; set; }
     }
 }
