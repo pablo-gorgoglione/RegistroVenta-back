@@ -13,6 +13,7 @@ namespace WSVenta.Models
         public decimal UnitPrice { get; set; }
         public int Quantity { get; set; }
         public decimal Subtotal { get; set; }
+        public decimal? Profit { get; set; }
 
         public virtual Item IdItemNavigation { get; set; }
         public virtual Sale IdSaleNavigation { get; set; }

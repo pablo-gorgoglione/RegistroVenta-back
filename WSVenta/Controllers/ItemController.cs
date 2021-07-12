@@ -60,7 +60,7 @@ namespace WSVenta.Controllers
 
         }
         [HttpGet("historyPrice/{Id}")]
-        public IActionResult GetHistory(int Id)
+        public IActionResult GetHistoryPrice(int Id)
         {
             Response oResponse = new Response();
             try
@@ -83,6 +83,42 @@ namespace WSVenta.Controllers
 
                     }
                     oResponse.Data = priceList;
+                    oResponse.Success = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                oResponse.Message = ex.Message;
+            }
+
+            return Ok(oResponse);
+
+        }
+
+        [HttpGet("historyCost/{Id}")]
+        public IActionResult GetHistoryCost(int Id)
+        {
+            Response oResponse = new Response();
+            try
+            {
+                using (PuntoVentaContext db = new PuntoVentaContext())
+                {
+                    List<ItemRequest> itemRequest = new List<ItemRequest>();
+                    var lst = db.Items
+                                .Where(x => x.Id == Id)
+                                .Select(item => item)
+                                .ToList();
+                    List<Cost> costList = new List<Cost>();
+                    foreach (var item in lst)
+                    {
+                        costList = db.Costs
+                                        .Where(x => x.IdItem == item.Id)
+                                        .OrderByDescending(x => x.Id)
+                                        .Select(x => x)
+                                        .ToList();
+
+                    }
+                    oResponse.Data = costList;
                     oResponse.Success = 1;
                 }
             }

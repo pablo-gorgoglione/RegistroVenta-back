@@ -100,6 +100,10 @@ namespace WSVenta.Models
 
                 entity.Property(e => e.IdSale).HasColumnName("idSale");
 
+                entity.Property(e => e.Profit)
+                    .HasColumnType("decimal(16, 2)")
+                    .HasColumnName("profit");
+
                 entity.Property(e => e.Quantity).HasColumnName("quantity");
 
                 entity.Property(e => e.Subtotal)

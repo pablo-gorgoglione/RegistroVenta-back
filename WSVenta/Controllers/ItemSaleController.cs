@@ -21,6 +21,7 @@ namespace WSVenta.Controllers
         //Get-ItemSale
 
         [HttpGet("{Id}")]
+        //get itemsale of one sale?
         public IActionResult Get(int Id)
         {
             Response oResponse = new Response();
@@ -49,5 +50,34 @@ namespace WSVenta.Controllers
 
         }
 
+        [HttpGet("profit/{Id}")]
+        //get itemsale of one sale?
+        public IActionResult GetProfit(int Id)
+        {
+            Response oResponse = new Response();
+            try
+            {
+                using (PuntoVentaContext db = new PuntoVentaContext())
+                {
+                    Sale iSale = db.Sales.Find((long)Id);
+
+                    var query = from itemsaleq in db.ItemSales
+                                where itemsaleq.IdSale == (long)Id
+                                select itemsaleq.Profit;
+
+
+                    var lst = query.ToList();
+                    oResponse.Success = 1;
+                    oResponse.Data = lst;
+                }
+            }
+            catch (Exception ex)
+            {
+                oResponse.Message = ex.Message;
+            }
+
+            return Ok(oResponse);
+
+        }
     }
 }

@@ -40,18 +40,22 @@ namespace WSVenta.Services
 
                                 id = (long)modelItemSale.IdItem;
                                 iItem = db.Items.Find(id);
+                                var iCost = db.Costs
+                                        .Where(x => x.IdItem == iItem.Id)
+                                        .OrderByDescending(x => x.Id)
+                                        .Select(x => x.UnitCost)
+                                        .FirstOrDefault();
 
+                                iItemSale.Profit = (modelItemSale.UnitPrice - iCost) * modelItemSale.Quantity;
                                 //iItemSale.UnitPrice = iItem.UnitPrice;
                                 iItemSale.Subtotal = modelItemSale.Subtotal;
                                 isubtotal = isubtotal + iItemSale.Subtotal;
-
+                                iItemSale.UnitPrice = modelItemSale.UnitPrice;
                                 iItemSale.IdSale = sale.Id;
                                 db.ItemSales.Add(iItemSale);
                                 db.SaveChanges();
-
                             }
                             transaction.Commit();
-
                             sale.Total = isubtotal;
                             db.Sales.Update(sale).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                             db.SaveChanges();
@@ -63,9 +67,7 @@ namespace WSVenta.Services
                         }
                     }
                 }
-
             }
         }
-
     }
 }

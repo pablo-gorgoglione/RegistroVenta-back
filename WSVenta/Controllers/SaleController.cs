@@ -108,6 +108,33 @@ namespace WSVenta.Controllers
 
         }
 
+        [HttpGet("allId/{id}")]       //Este funciona
+        public IActionResult GetAllid(long id)
+        {
+            UserIdOn = id;
+            Response oResponse = new Response();
+            try
+            {
+                using (PuntoVentaContext db = new PuntoVentaContext())
+                {
+                    var query = from saleq in db.Sales
+                                where saleq.IdUser == id
+                                select saleq.Id;
+
+                    var lst = query.ToList();
+                    oResponse.Success = 1;
+                    oResponse.Data = lst;
+                }
+            }
+            catch (Exception ex)
+            {
+                oResponse.Message = ex.Message;
+            }
+
+            return Ok(oResponse);
+
+        }
+
         [HttpGet("Salelist/{opc}")]
         public IActionResult GetSalesOrder(int opc)
         {
@@ -162,6 +189,57 @@ namespace WSVenta.Controllers
             return Ok(oResponse);
         }
 
+        [HttpGet("SalelistId/{opc}")]
+        public IActionResult GetSalesIDOrder(int opc)
+        {
+            //string connectionString = "server= localhost ; database= PuntoVenta ; integrated security= true";
+            // SqlConnection connection = new SqlConnection(connectionString);
+            Response oResponse = new Response();
+            try
+            {
+                using (PuntoVentaContext db = new PuntoVentaContext())
+                {
+                    DateTime lastweek = DateTime.Today;
+                    if (opc == 1)
+                    {
+                        lastweek = lastweek.AddDays(-7);
+                        var query = from saleq in db.Sales
+                                    where saleq.IdUser == UserIdOn && saleq.Date > lastweek
+                                    select saleq.Id;
+                        var lst = query.ToList();
+
+                        //var query2 = from saleq2 in db.Sales
+                        //             where saleq2.Date > lastweek
+                        //             orderby saleq2.Date descending
+                        //             select saleq2;
+                        //var lst2 = query2.ToList();
+
+
+                        oResponse.Success = 1;
+
+                        oResponse.Data = lst;
+                    }
+                    if (opc == 2)
+                    {
+                        lastweek = lastweek.AddMonths(-1);
+                        var query = from saleq in db.Sales
+                                    where saleq.IdUser == UserIdOn && saleq.Date > lastweek
+                                    select saleq.Id;
+
+                        var lst = query.ToList();
+                        oResponse.Success = 1;
+                        oResponse.Data = lst;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                oResponse.Message = ex.Message;
+            }
+
+            return Ok(oResponse);
+        }
 
         [HttpDelete("{Id}")]
         public IActionResult Delete(long Id)
