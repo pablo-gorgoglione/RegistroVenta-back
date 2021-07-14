@@ -34,6 +34,10 @@ namespace WSVenta
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connString = Configuration.GetConnectionString("MyContex");
+            services.Configure<DbContextOptionsInfo>(settings => settings.MyContext = (connString));
+            services.AddScoped<PuntoVentaContext>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WSVenta", Version = "v1" });
