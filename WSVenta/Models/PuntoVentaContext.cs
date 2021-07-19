@@ -63,6 +63,10 @@ namespace WSVenta.Models
             {
                 entity.ToTable("item");
 
+                entity.HasIndex(e => new { e.IdCost, e.Id }, "IX_item_idCost_id");
+
+                entity.HasIndex(e => new { e.IdPrice, e.Id }, "IX_item_idPrice_id");
+
                 entity.Property(e => e.Id)
                     .ValueGeneratedOnAdd()
                     .HasColumnName("id");
@@ -93,6 +97,10 @@ namespace WSVenta.Models
             modelBuilder.Entity<ItemSale>(entity =>
             {
                 entity.ToTable("itemSale");
+
+                entity.HasIndex(e => e.IdItem, "IX_itemSale_idItem");
+
+                entity.HasIndex(e => e.IdSale, "IX_itemSale_idSale");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -151,6 +159,8 @@ namespace WSVenta.Models
             modelBuilder.Entity<Sale>(entity =>
             {
                 entity.ToTable("sale");
+
+                entity.HasIndex(e => e.IdUser, "IX_sale_idUser");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 

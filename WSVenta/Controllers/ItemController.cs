@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WSVenta.Controllers
 {
+    //Funciona
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -184,11 +185,11 @@ namespace WSVenta.Controllers
             }
             catch (Exception ex)
             {
-                oResponse.Message = ex.Message;
+                oResponse.Message = ex.InnerException.Message;
             }
             return Ok(oResponse);
         }
-
+       
         [HttpPut]
         public IActionResult Update(ItemRequest oRequest)
         {
@@ -284,7 +285,7 @@ namespace WSVenta.Controllers
             }
             catch (Exception ex)
             {
-                oResponse.Message = ex.Message;
+                oResponse.Message = ex.InnerException.Message;
             }
             return Ok(oResponse);
         }
